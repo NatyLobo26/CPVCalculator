@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center; /* Center content horizontally */
+        }
+
+        img#logo {
+            width: 200px; /* Adjust this value to your desired width */
+            height: auto; /* Maintain aspect ratio */
+            margin-bottom: 20px; /* Add some bottom margin for spacing */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px; /* Gap between blocks */
+        }
+
+        .columns {
+            display: flex;
+            gap: 20px;
+            align-items: center; /* Center columns vertically */
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question {
+            padding: 2px;
+            display: flex;
+            align-items: center; /* Center both question and answer vertically */
+        }
+
+        .question label {
+            width: auto; /* Allow the question label to take necessary width */
+            line-height: 1.5; /* Adjust line-height to vertically center text within the label */
+        }
+
+        .answer {
+            padding: 2px;
+            box-sizing: border-box;
+            max-width: 50px; /* Cambié width a max-width */
+            width: 100%; /* Usa el 100% del ancho disponible */
+            text-align: center;
+            flex-shrink: 0;
+            line-height: 1.5;
+        }
+        .answer input[type="number"] {
+            width: 100%; /* Ajusta el ancho de las cajas de entrada de texto */
+            max-width: 100px; /* Ajusta el ancho máximo según sea necesario */
+        }
+
+
+
+
+
+        /* Updated styling for checkbox group */
+        .checkbox-group {
+            margin-top: 20px;
+            text-align: center; /* Center the text */
+            width: 100%; /* Take up the full width */
+        }
+
+        .checkbox-group ul {
+            list-style: none; /* Remove default list styling */
+            padding: 0;
+            margin: 0; /* Remove default margin */
+        }
+
+        .checkbox-group label {
+            display: inline-block; /* Place each label on a new line */
+            margin-bottom: 5px; /* Add some spacing between items */
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            display: inline-block; /* Align the checkbox to the left */
+            margin-right: 5px; /* Add some spacing between the checkbox and label */
+        }
+
+        /* Style for the button container */
+        .button-container {
+            text-align: center; /* Center the content horizontally */
+            margin-top: 20px; /* Add margin for spacing */
+        }
+
+        /* Style for the button */
+        .button-container button {
+            padding: 12px;
+            width: 200px;
+            background-color: #66CDF1;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #location {
+        width: 100%; /* Adjust width as needed */
+        padding: 5px; /* Adjust padding as needed */
+        box-sizing: border-box; /* Include padding and border in width */
+        }
+
+
+
+    </style>
+
+<script>
+    var currentInput = 1;
+
+
+
+    function calculateCost() {
+        var doors_drawers = parseInt(document.getElementById("doors_drawers").value) || 0;
+
+        var second_color = document.getElementById("second_color").checked ? 1 : 0;
+        var oak_cabinets = document.getElementById("oak_cabinets").checked ? 1 : 0;
+
+
+        var glass_doors = parseInt(document.getElementById("glass_doors").value) || 0;
+        var replace_glass = parseInt(document.getElementById("replace_glass").value) || 0;
+        var interiors = parseInt(document.getElementById("interiors").value) || 0;
+        var shelves = parseInt(document.getElementById("shelves").value) || 0;
+
+        var ornate_cabinets = document.getElementById("ornate_cabinets").checked ? 1 : 0;
+        var soft_close_hinges = document.getElementById("soft_close_hinges").checked ? 1 : 0;
+        var drilling_holes = document.getElementById("drilling_holes").checked ? 1 : 0;
+        var wine_rack = document.getElementById("wine_rack").checked ? 1 : 0;
+
+
+        var extra_rooms = parseInt(document.getElementById("extra_rooms").value) || 0;
+        var slabs = parseInt(document.getElementById("slabs").value) || 0;
+        var backsplash = parseInt(document.getElementById("backsplash").value) || 0;
+        var plumbing = parseInt(document.getElementById("plumbing").value) || 0;
+
+        var shop_labour = doors_drawers * 50;
+        var sundries_materials = (doors_drawers <= 35) ? 350 : (350 + (doors_drawers - 35) * 5);
+        var door_removal_reinstallation = doors_drawers * 10;
+        var paint_shop_onsite =
+            doors_drawers <= 21
+                ? 380
+                : doors_drawers <= 31
+                ? 380 + ((doors_drawers - 20) * (835 - 380) / (31 - 20))
+                : 835 + ((doors_drawers - 31) * (1285 - 835) / (46 - 31));
+
+
+
+
+        var on_site_labour = (doors_drawers <= 20) ? 1120 :
+            ((doors_drawers <= 35) ? 1120 + (doors_drawers - 20) * 38 :
+                ((doors_drawers <= 45) ? 1680 + (doors_drawers - 35) * 34 :
+                    ((doors_drawers <= 55) ? 1960 + (doors_drawers - 45) * 30 : 2240 + (doors_drawers - 55) * 25)
+                )
+            );
+
+        var total_cost = shop_labour + sundries_materials + door_removal_reinstallation + paint_shop_onsite + on_site_labour;
+
+        if (second_color === 1) {
+            total_cost += 225 + 210 + 60;
+        }
+
+        if (oak_cabinets === 1) {
+            total_cost += 0.25 * (shop_labour + on_site_labour);
+        }
+
+        total_cost += glass_doors * 10;
+        total_cost += replace_glass * 80;
+        total_cost += interiors * 70;
+        total_cost += shelves * 27.5;
+        total_cost += (ornate_cabinets === 1) ? 0.05 * on_site_labour : 0;
+
+        if (soft_close_hinges === 1) {
+            total_cost += doors_drawers * 30;
+        }
+
+        if (drilling_holes === 1) {
+            total_cost += doors_drawers * 6.5;
+        }
+
+        total_cost += wine_rack * 75;
+        total_cost += extra_rooms * 50;
+
+
+        if (slabs > 0) {
+            total_cost += slabs * 2350; // Cost for slabs
+            total_cost += 300; // Demo fee
+            total_cost += 200; // Cleaning fee
+        } else {
+            total_cost += 0; // If no slabs, total cost remains 0
+        }
+
+        if (backsplash > 0) {
+            total_cost += backsplash * 2150; // Cost for slabs
+            total_cost += 300; // Demo fee
+        } else {
+            total_cost += 0; // If no slabs, total cost remains 0
+        }
+
+
+        total_cost += plumbing * (1610)
+        var location = document.getElementById("location").value;
+
+        // Add travel fee based on the selected location
+        switch (location) {
+            case "Langley":
+                total_cost += 349;
+                break;
+            case "Delta":
+                total_cost += 174;
+                break;
+            case "MapleRidge":
+                total_cost += 349;
+                break;
+            case "Abbotsford":
+                total_cost += 581;
+                break;
+            case "SouthSurrey":
+                total_cost += 349;
+                break;
+            case "BowenTrips":
+                total_cost += 420;
+                break;
+            case "BowenReno":
+                total_cost += 884;
+                break;
+            case "Condo":
+                total_cost *= 1.05; // Add 5% for Condo fee
+                break;
+            default:
+                // For Vancouver or other cases, no additional travel fee
+                break;
+        }
+             
+        var management;
+        if (total_cost <= 6900) {
+            management = 58;
+        } else if (total_cost <= 11630) {
+            management = 116;
+        } else if (total_cost <= 23255) {
+            management = 232;
+        } else {
+            management = 348;
+        }
+
+        total_cost += management;
+
+        var sub_1 = total_cost * 1.72;
+        var sub_2 = sub_1 * 1.03;
+
+        var plus;
+        if (sub_2 <= 10000) {
+            plus = 35;
+        } else if (sub_2 <= 15000) {
+            plus = 80;
+        } else if (sub_2 <= 25000) {
+            plus = 90;
+        } else {
+            plus = 250;
+        }
+
+        sub_2 += plus
+        
+        /*var commission = final_cost * 1.03;
+
+        var TOTAL;
+        if (commission <= 10000) {
+            TOTAL = commission + 35;
+        } else if (commission <= 15000) {
+            TOTAL = commission + 80;
+        } else if (commission <= 25000) {
+            TOTAL = commission + 90;
+        } else {
+            TOTAL = commission + 250;
+        }
+
+        commission += TOTAL;*/
+
+        alert("Result: $" + sub_2.toFixed(2));
+        // Redirect to index.html after displaying the result
+        window.location.replace('index.html')
+    }
+</script>
+<link rel="manifest" href="manifest.json">
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+<body>
+
+<div class="container">
+    <div class="logo">
+        <!-- Your logo HTML goes here -->
+        <img id="logo" src="http://www.cabinetpaintingvancouver.com/wp-content/uploads/2019/01/CPVLogo_padded.png" alt="Cabinet Painting Vancouver">
+    </div>
+
+    <div class="columns">
+        <div class="column">
+            <div class="question">
+                <label for="doors_drawers">Number of doors/drawers:</label>
+            </div>
+
+            <div class="question">
+                <label for="glass_doors">Number of glass doors:</label>
+            </div>
+
+            <div class="question">
+                <label for="replace_glass">Glass doors to be replaced:</label>
+            </div>
+
+            <div class="question">
+                <label for="interiors">Interiors cabinets to be painted:</label>
+            </div>
+
+            <div class="question">
+                <label for="shelves">Shelves to be painted in the shop</label>
+            </div>
+
+            <div class="question">
+                <label for="slabs">How many slabs?:</label>
+            </div>
+
+            <div class="question">
+                <label for="backsplash">Backsplash:</label>
+            </div>
+
+            <div class="question">
+                <label for="plumbing">Sink/faucets combos:</label>
+            </div>
+
+            <div class="question">
+                <label for="extra_rooms">Extra Rooms:</label>
+            </div>
+
+        </div>
+
+
+        <div class="column">
+            <div class="answer">
+                <input type="number" id="doors_drawers" placeholder="">
+            </div>
+
+            <div class="answer">
+                <input type="number" id="glass_doors" placeholder="">
+            </div>
+
+            <div class="answer">
+                <input type="number" id="replace_glass" placeholder="">
+            </div>
+
+            <div class="answer">
+                <input type="number" id="interiors" placeholder="">
+            </div>
+
+            <div class="answer">
+                <input type="number" id="shelves" placeholder="">
+            </div>
+            
+            <div class="answer">
+                <input type="number" id="slabs" placeholder="">
+            </div>
+
+            <div class="answer">
+                <input type="number" id="backsplash" placeholder="">
+            </div>
+
+            <div class="answer">
+                <input type="number" id="plumbing" placeholder="">
+            </div>
+
+            <div class="answer">
+                <input type="number" id="extra_rooms" placeholder="">
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="checkbox-group">
+        <!-- Single column with multiple-choice list -->
+        <p>Select what applies:</p>
+
+        <ul>
+            <li>
+                <input type="checkbox" id="second_color" name="options[]" value="second_color">
+                <label for="second_color">Second Color</label>
+            </li>
+
+            <li>
+                <input type="checkbox" id="soft_close_hinges" name="options[]" value="soft_close_hinges">
+                <label for="soft_close_hinges">Soft Close Hinges&Dampers</label>
+            </li>
+
+            <li>
+                <input type="checkbox" id="drilling_holes" name="options[]" value="drilling_holes">
+                <label for="drilling_holes">Filling and Drilling new holes</label>
+            </li>
+
+            <li>
+                <input type="checkbox" id="oak_cabinets" name="options[]" value="oak_cabinets">
+                <label for="oak_cabinets">Oak Cabinets</label>
+            </li>
+
+            <li>
+                <input type="checkbox" id="ornate_cabinets" name="options[]" value="ornate_cabinets">
+                <label for="ornate_cabinets">Ornate in the cabinets</label>
+            </li>
+
+            <li>
+                <input type="checkbox" id="wine_rack" name="options[]" value="wine_rack">
+                <label for="wine_rack">Wine rack</label>
+            </li>
+
+        </ul>
+    </div>
+
+
+    <div style="width: 200px; margin: 0 auto;"> <!-- Adjust width as needed -->
+        <select id="location">
+            <option value="Vancouver">Great Vancouver Area</option>
+            <option value="Langley">Langley</option>
+            <option value="Delta">Delta</option>
+            <option value="MapleRidge">Maple Ridge</option>
+            <option value="Abbotsford">Abbotsford</option>
+            <option value="SouthSurrey">South Surrey</option>
+            <option value="BowenTrips">Bowen 5 trips</option>
+            <option value="BowenReno">Bowen full reno</option>
+            <option value="Condo">Condo</option>
+        </select>
+    </div>
+    
+
+    <!-- New div for the button -->
+    <div class="button-container">
+        <button type="button" onclick="calculateCost()">Calculate</button>
+    </div>
+    
+
+
+
+
+
+
+
+</div>
+
+</body>
+
+
+
+</html>
